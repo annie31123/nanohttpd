@@ -62,7 +62,7 @@ import java.util.regex.Matcher;
 
 import javax.net.ssl.SSLException;
 
-import org.nanohttpd.protocols.http.NanoHTTPD.ResponseException;
+import org.nanohttpd.protocols.http.ResponseException;
 import org.nanohttpd.protocols.http.content.ContentType;
 import org.nanohttpd.protocols.http.content.CookieHandler;
 import org.nanohttpd.protocols.http.request.Method;
@@ -155,9 +155,9 @@ public class HTTPSession implements IHTTPSession {
             int qmi = uri.indexOf('?');
             if (qmi >= 0) {
                 decodeParms(uri.substring(qmi + 1), parms);
-                uri = NanoHTTPD.decodePercent(uri.substring(0, qmi));
+                uri = Decoder.decodePercent(uri.substring(0, qmi));
             } else {
-                uri = NanoHTTPD.decodePercent(uri);
+                uri = Decoder.decodePercent(uri);
             }
 
             // If there's another token, its protocol version,
@@ -318,10 +318,10 @@ public class HTTPSession implements IHTTPSession {
             String value = null;
 
             if (sep >= 0) {
-                key = NanoHTTPD.decodePercent(e.substring(0, sep)).trim();
-                value = NanoHTTPD.decodePercent(e.substring(sep + 1));
+                key = Decoder.decodePercent(e.substring(0, sep)).trim();
+                value = Decoder.decodePercent(e.substring(sep + 1));
             } else {
-                key = NanoHTTPD.decodePercent(e).trim();
+                key = Decoder.decodePercent(e).trim();
                 value = "";
             }
 

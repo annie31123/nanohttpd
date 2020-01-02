@@ -136,26 +136,7 @@ public abstract class NanoHTTPD {
 
     public static final Pattern CONTENT_DISPOSITION_ATTRIBUTE_PATTERN = Pattern.compile(CONTENT_DISPOSITION_ATTRIBUTE_REGEX);
 
-    public static final class ResponseException extends Exception {
-
-        private static final long serialVersionUID = 6569838532917408380L;
-
-        private final Status status;
-
-        public ResponseException(Status status, String message) {
-            super(message);
-            this.status = status;
-        }
-
-        public ResponseException(Status status, String message, Exception e) {
-            super(message, e);
-            this.status = status;
-        }
-
-        public Status getStatus() {
-            return this.status;
-        }
-    }
+    
 
     /**
      * Maximum time to wait on Socket.getInputStream().read() (in milliseconds)

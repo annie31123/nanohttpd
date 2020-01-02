@@ -38,7 +38,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import org.nanohttpd.protocols.http.NanoHTTPD.ResponseException;
+import org.nanohttpd.protocols.http.ResponseException;
 import org.nanohttpd.protocols.http.content.CookieHandler;
 import org.nanohttpd.protocols.http.request.Method;
 

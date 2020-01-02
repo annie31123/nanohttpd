@@ -1,5 +1,7 @@
 package org.nanohttpd.protocols.http;
 
+
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 
@@ -14,7 +16,7 @@ import java.util.logging.Logger;
 
 
 
-public class URLDecoder{
+public class Decoder{
 
     /**
      *To store the actual query string in the parameters map for later re-processing.
@@ -27,7 +29,7 @@ public class URLDecoder{
     public static final Logger LOG = Logger.getLogger(Decoder.class.getName());
 
 
-    URLDecoder(String queryString){
+    Decoder(String queryString){
         queryStringParameters = queryString;
     }
     /**
