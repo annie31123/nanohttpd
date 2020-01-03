@@ -13,15 +13,15 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MimeTypes {
+public class MimeTypes implements IMimeTypes{
 
 	/**
      * Hashtable mapping (String)FILENAME_EXTENSION -> (String)MIME_TYPE
      */
-    protected static Map<String, String> MIME_TYPES;
+    //protected static Map<String, String> MIME_TYPES;
     public static final Logger LOG = Logger.getLogger(MimeTypes.class.getName());
 
-    public static Map<String, String> mappingMimeTypes() {
+    public  Map<String, String> mappingMimeTypes(Map<String, String> MIME_TYPES) {
         if (MIME_TYPES == null) {
             MIME_TYPES = new HashMap<String, String>();
             loadMimeTypes(MIME_TYPES, "META-INF/nanohttpd/default-mimetypes.properties");
@@ -39,7 +39,7 @@ public class MimeTypes {
     })
     private static void loadMimeTypes(Map<String, String> result, String resourceName) {
         try {
-            Enumeration<URL> resources = NanoHTTPD.class.getClassLoader().getResources(resourceName);
+            Enumeration<URL> resources = MimeTypes.class.getClassLoader().getResources(resourceName);
             while (resources.hasMoreElements()) {
                 URL url = (URL) resources.nextElement();
                 Properties properties = new Properties();
@@ -59,21 +59,7 @@ public class MimeTypes {
         }
     };
     
-    /**
-     * Get MIME type from file name extension, if possible
-     * 
-     * @param uri
-     *            the string representing a file
-     * @return the connected mime/type
-     */
-    public static String getMimeTypeForFile(String uri) {
-        int dot = uri.lastIndexOf('.');
-        String mime = null;
-        if (dot >= 0) {
-            mime = mappingMimeTypes().get(uri.substring(dot + 1).toLowerCase());
-        }
-        return mime == null ? "application/octet-stream" : mime;
-    }
+    
     
     public static final void safeClose(Object closeable) {
         try {

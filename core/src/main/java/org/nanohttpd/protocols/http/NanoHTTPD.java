@@ -159,7 +159,9 @@ public abstract class NanoHTTPD {
      * logger to log to.
      */
     public static final Logger LOG = Logger.getLogger(NanoHTTPD.class.getName());
-
+    
+    
+    protected static Map<String, String> MIME_TYPES;
     
 
     /**
@@ -215,8 +217,30 @@ public abstract class NanoHTTPD {
             throw new IOException(e.getMessage());
         }
     }
-
     
+    public static Map<String, String> setMimeTypes() {
+    	
+    	IMimeTypes mimeTypes = new MimeTypes();
+    	MIME_TYPES = mimeTypes.mappingMimeTypes(MIME_TYPES);
+    	
+    	return MIME_TYPES;
+    }
+
+    /**
+     * Get MIME type from file name extension, if possible
+     * 
+     * @param uri
+     *            the string representing a file
+     * @return the connected mime/type
+     */
+    public static String getMimeTypeForFile(String uri) {
+        int dot = uri.lastIndexOf('.');
+        String mime = null;
+        if (dot >= 0) {
+            mime = setMimeTypes().get(uri.substring(dot + 1).toLowerCase());
+        }
+        return mime == null ? "application/octet-stream" : mime;
+    }
 
     public static final void safeClose(Object closeable) {
         try {
@@ -235,6 +259,9 @@ public abstract class NanoHTTPD {
             NanoHTTPD.LOG.log(Level.SEVERE, "Could not close", e);
         }
     }
+    
+    
+    
 
     public final String hostname;
 
@@ -362,6 +389,8 @@ public abstract class NanoHTTPD {
     public IFactory<ITempFileManager> getTempFileManagerFactory() {
         return tempFileManagerFactory;
     }
+    
+    
 
     /**
      * Call before start() to serve over HTTPS instead of HTTP
