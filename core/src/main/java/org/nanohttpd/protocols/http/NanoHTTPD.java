@@ -160,48 +160,7 @@ public abstract class NanoHTTPD {
      */
     public static final Logger LOG = Logger.getLogger(NanoHTTPD.class.getName());
 
-    /**
-     * Hashtable mapping (String)FILENAME_EXTENSION -> (String)MIME_TYPE
-     */
-    protected static Map<String, String> MIME_TYPES;
-
-    public static Map<String, String> mimeTypes() {
-        if (MIME_TYPES == null) {
-            MIME_TYPES = new HashMap<String, String>();
-            loadMimeTypes(MIME_TYPES, "META-INF/nanohttpd/default-mimetypes.properties");
-            loadMimeTypes(MIME_TYPES, "META-INF/nanohttpd/mimetypes.properties");
-            if (MIME_TYPES.isEmpty()) {
-                LOG.log(Level.WARNING, "no mime types found in the classpath! please provide mimetypes.properties");
-            }
-        }
-        return MIME_TYPES;
-    }
-
-    @SuppressWarnings({
-        "unchecked",
-        "rawtypes"
-    })
-    private static void loadMimeTypes(Map<String, String> result, String resourceName) {
-        try {
-            Enumeration<URL> resources = NanoHTTPD.class.getClassLoader().getResources(resourceName);
-            while (resources.hasMoreElements()) {
-                URL url = (URL) resources.nextElement();
-                Properties properties = new Properties();
-                InputStream stream = null;
-                try {
-                    stream = url.openStream();
-                    properties.load(stream);
-                } catch (IOException e) {
-                    LOG.log(Level.SEVERE, "could not load mimetypes from " + url, e);
-                } finally {
-                    safeClose(stream);
-                }
-                result.putAll((Map) properties);
-            }
-        } catch (IOException e) {
-            LOG.log(Level.INFO, "no mime types available at " + resourceName);
-        }
-    };
+    
 
     /**
      * Creates an SSLSocketFactory for HTTPS. Pass a loaded KeyStore and an
@@ -257,21 +216,7 @@ public abstract class NanoHTTPD {
         }
     }
 
-    /**
-     * Get MIME type from file name extension, if possible
-     * 
-     * @param uri
-     *            the string representing a file
-     * @return the connected mime/type
-     */
-    public static String getMimeTypeForFile(String uri) {
-        int dot = uri.lastIndexOf('.');
-        String mime = null;
-        if (dot >= 0) {
-            mime = mimeTypes().get(uri.substring(dot + 1).toLowerCase());
-        }
-        return mime == null ? "application/octet-stream" : mime;
-    }
+    
 
     public static final void safeClose(Object closeable) {
         try {
