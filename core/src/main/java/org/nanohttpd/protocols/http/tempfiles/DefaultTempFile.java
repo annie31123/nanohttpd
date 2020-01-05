@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.nanohttpd.protocols.http.NanoHTTPD;
+import org.nanohttpd.protocols.http.SafeCloser;
 
 /**
  * Default strategy for creating and cleaning up temporary files.
@@ -61,7 +62,7 @@ public class DefaultTempFile implements ITempFile {
 
     @Override
     public void delete() throws Exception {
-        NanoHTTPD.safeClose(this.fstream);
+    	SafeCloser.safeClose(this.fstream);
         if (!this.file.delete()) {
             throw new Exception("could not delete temporary file: " + this.file.getAbsolutePath());
         }

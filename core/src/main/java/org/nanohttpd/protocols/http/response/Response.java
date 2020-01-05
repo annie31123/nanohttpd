@@ -57,6 +57,7 @@ import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 
 import org.nanohttpd.protocols.http.NanoHTTPD;
+import org.nanohttpd.protocols.http.SafeCloser;
 import org.nanohttpd.protocols.http.content.ContentType;
 import org.nanohttpd.protocols.http.request.Method;
 
@@ -267,7 +268,7 @@ public class Response implements Closeable {
             pw.flush();
             sendBodyWithCorrectTransferAndEncoding(outputStream, pending);
             outputStream.flush();
-            NanoHTTPD.safeClose(this.data);
+            SafeCloser.safeClose(this.data);
         } catch (IOException ioe) {
             NanoHTTPD.LOG.log(Level.SEVERE, "Could not send response to the client", ioe);
         }

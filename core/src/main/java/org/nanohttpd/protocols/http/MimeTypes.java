@@ -50,7 +50,7 @@ public class MimeTypes implements IMimeTypes{
                 } catch (IOException e) {
                     LOG.log(Level.SEVERE, "could not load mimetypes from " + url, e);
                 } finally {
-                    safeClose(stream);
+                	SafeCloser.safeClose(stream);
                 }
                 result.putAll((Map) properties);
             }
@@ -61,21 +61,4 @@ public class MimeTypes implements IMimeTypes{
     
     
     
-    public static final void safeClose(Object closeable) {
-        try {
-            if (closeable != null) {
-                if (closeable instanceof Closeable) {
-                    ((Closeable) closeable).close();
-                } else if (closeable instanceof Socket) {
-                    ((Socket) closeable).close();
-                } else if (closeable instanceof ServerSocket) {
-                    ((ServerSocket) closeable).close();
-                } else {
-                    throw new IllegalArgumentException("Unknown object to close");
-                }
-            }
-        } catch (IOException e) {
-            MimeTypes.LOG.log(Level.SEVERE, "Could not close", e);
-        }
-    }
 }

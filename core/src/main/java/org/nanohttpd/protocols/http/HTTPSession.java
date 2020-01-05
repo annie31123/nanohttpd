@@ -165,14 +165,14 @@ public class HTTPSession implements IHTTPSession {
             } catch (SSLException e) {
                 throw e;
             } catch (IOException e) {
-                NanoHTTPD.safeClose(this.inputStream);
-                NanoHTTPD.safeClose(this.outputStream);
+            	SafeCloser.safeClose(this.inputStream);
+            	SafeCloser.safeClose(this.outputStream);
                 throw new SocketException("NanoHttpd Shutdown");
             }
             if (read == -1) {
                 // socket was been closed
-                NanoHTTPD.safeClose(this.inputStream);
-                NanoHTTPD.safeClose(this.outputStream);
+            	SafeCloser.safeClose(this.inputStream);
+            	SafeCloser.safeClose(this.outputStream);
                 throw new SocketException("NanoHttpd Shutdown");
             }
             while (read > 0) {
@@ -255,17 +255,17 @@ public class HTTPSession implements IHTTPSession {
         } catch (SSLException ssle) {
             Response resp = Response.newFixedLengthResponse(Status.INTERNAL_ERROR, NanoHTTPD.MIME_PLAINTEXT, "SSL PROTOCOL FAILURE: " + ssle.getMessage());
             resp.send(this.outputStream);
-            NanoHTTPD.safeClose(this.outputStream);
+            SafeCloser.safeClose(this.outputStream);
         } catch (IOException ioe) {
             Response resp = Response.newFixedLengthResponse(Status.INTERNAL_ERROR, NanoHTTPD.MIME_PLAINTEXT, "SERVER INTERNAL ERROR: IOException: " + ioe.getMessage());
             resp.send(this.outputStream);
-            NanoHTTPD.safeClose(this.outputStream);
+            SafeCloser.safeClose(this.outputStream);
         } catch (ResponseException re) {
             Response resp = Response.newFixedLengthResponse(re.getStatus(), NanoHTTPD.MIME_PLAINTEXT, re.getMessage());
             resp.send(this.outputStream);
-            NanoHTTPD.safeClose(this.outputStream);
+            SafeCloser.safeClose(this.outputStream);
         } finally {
-            NanoHTTPD.safeClose(r);
+        	SafeCloser.safeClose(r);
             this.tempFileManager.clear();
         }
     }
@@ -427,7 +427,7 @@ public class HTTPSession implements IHTTPSession {
                 files.put("content", saveTmpFile(fbuf, 0, fbuf.limit(), null));
             }
         } finally {
-            NanoHTTPD.safeClose(randomAccessFile);
+        	SafeCloser.safeClose(randomAccessFile);
         }
     }
 
@@ -450,7 +450,7 @@ public class HTTPSession implements IHTTPSession {
             } catch (Exception e) { // Catch exception if any
                 throw new Error(e); // we won't recover, so throw an error
             } finally {
-                NanoHTTPD.safeClose(fileOutputStream);
+            	SafeCloser.safeClose(fileOutputStream);
             }
         }
         return path;

@@ -2,9 +2,12 @@ package org.nanohttpd.protocols.http;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.Closeable;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
@@ -14,7 +17,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.nanohttpd.protocols.http.content.ContentType;
 import org.nanohttpd.protocols.http.response.Status;
@@ -22,6 +27,20 @@ import org.nanohttpd.protocols.http.tempfiles.ITempFile;
 import org.nanohttpd.protocols.http.tempfiles.ITempFileManager;
 
 public class HttpSessionDecoder {
+	
+	public static final String CONTENT_DISPOSITION_REGEX = "([ |\t]*Content-Disposition[ |\t]*:)(.*)";
+
+    public static final Pattern CONTENT_DISPOSITION_PATTERN = Pattern.compile(CONTENT_DISPOSITION_REGEX, Pattern.CASE_INSENSITIVE);
+
+    public static final String CONTENT_TYPE_REGEX = "([ |\t]*content-type[ |\t]*:)(.*)";
+
+    public static final Pattern CONTENT_TYPE_PATTERN = Pattern.compile(CONTENT_TYPE_REGEX, Pattern.CASE_INSENSITIVE);
+
+    public static final String CONTENT_DISPOSITION_ATTRIBUTE_REGEX = "[ |\t]*([a-zA-Z]*)[ |\t]*=[ |\t]*['|\"]([^\"^']*)['|\"]";
+
+    public static final Pattern CONTENT_DISPOSITION_ATTRIBUTE_PATTERN = Pattern.compile(CONTENT_DISPOSITION_ATTRIBUTE_REGEX);
+
+    public static final Logger LOG = Logger.getLogger(HttpSessionDecoder.class.getName());
 	
 	private String protocolVersion;
 	
@@ -88,7 +107,7 @@ public class HttpSessionDecoder {
                 protocolVersion = st.nextToken();
             } else {
                 protocolVersion = "HTTP/1.1";
-                NanoHTTPD.LOG.log(Level.FINE, "no protocol version specified, strange. Assuming HTTP/1.1.");
+                HttpSessionDecoder.LOG.log(Level.FINE, "no protocol version specified, strange. Assuming HTTP/1.1.");
             }
             String line = in.readLine();
             while (line != null && !line.trim().isEmpty()) {
@@ -137,10 +156,10 @@ public class HttpSessionDecoder {
                 mpline = in.readLine();
                 headerLines++;
                 while (mpline != null && mpline.trim().length() > 0) {
-                    Matcher matcher = NanoHTTPD.CONTENT_DISPOSITION_PATTERN.matcher(mpline);
+                    Matcher matcher = HttpSessionDecoder.CONTENT_DISPOSITION_PATTERN.matcher(mpline);
                     if (matcher.matches()) {
                         String attributeString = matcher.group(2);
-                        matcher = NanoHTTPD.CONTENT_DISPOSITION_ATTRIBUTE_PATTERN.matcher(attributeString);
+                        matcher = HttpSessionDecoder.CONTENT_DISPOSITION_ATTRIBUTE_PATTERN.matcher(attributeString);
                         while (matcher.find()) {
                             String key = matcher.group(1);
                             if ("name".equalsIgnoreCase(key)) {
@@ -158,7 +177,7 @@ public class HttpSessionDecoder {
                             }
                         }
                     }
-                    matcher = NanoHTTPD.CONTENT_TYPE_PATTERN.matcher(mpline);
+                    matcher = HttpSessionDecoder.CONTENT_TYPE_PATTERN.matcher(mpline);
                     if (matcher.matches()) {
                         partContentType = matcher.group(2).trim();
                     }
@@ -320,11 +339,13 @@ public class HttpSessionDecoder {
             } catch (Exception e) { // Catch exception if any
                 throw new Error(e); // we won't recover, so throw an error
             } finally {
-                NanoHTTPD.safeClose(fileOutputStream);
+            	SafeCloser.safeClose(fileOutputStream);
             }
         }
         return path;
     }
+    
+    
     
 
 }

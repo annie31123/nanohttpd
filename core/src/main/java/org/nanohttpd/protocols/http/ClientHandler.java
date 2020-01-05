@@ -60,8 +60,8 @@ public class ClientHandler implements Runnable {
     }
 
     public void close() {
-        NanoHTTPD.safeClose(this.inputStream);
-        NanoHTTPD.safeClose(this.acceptSocket);
+    	SafeCloser.safeClose(this.inputStream);
+    	SafeCloser.safeClose(this.acceptSocket);
     }
 
     @Override
@@ -86,9 +86,9 @@ public class ClientHandler implements Runnable {
                 NanoHTTPD.LOG.log(Level.SEVERE, "Communication with the client broken, or an bug in the handler code", e);
             }
         } finally {
-            NanoHTTPD.safeClose(outputStream);
-            NanoHTTPD.safeClose(this.inputStream);
-            NanoHTTPD.safeClose(this.acceptSocket);
+        	SafeCloser.safeClose(outputStream);
+        	SafeCloser.safeClose(this.inputStream);
+        	SafeCloser.safeClose(this.acceptSocket);
             httpd.asyncRunner.closed(this);
         }
     }
