@@ -58,11 +58,11 @@ public class HttpSessionDecoder {
 	
 	
 	
-	public String getProtocolVersion() {
+	protected String getProtocolVersion() {
 		return protocolVersion;
 	}
 	
-	public String getqQueryParameterString() {
+	protected String getqQueryParameterString() {
 		return queryParameterString;
 	}
 	

@@ -154,48 +154,9 @@ public class HTTPSession implements IHTTPSession {
             // Apache's default header limit is 8KB.
             // Do NOT assume that a single read will get the entire header
             // at once!
-            byte[] buf = new byte[HTTPSession.BUFSIZE];
-            this.splitbyte = 0;
-            this.rlen = 0;
-
-            int read = -1;
-            this.inputStream.mark(HTTPSession.BUFSIZE);
-            try {
-                read = this.inputStream.read(buf, 0, HTTPSession.BUFSIZE);
-            } catch (SSLException e) {
-                throw e;
-            } catch (IOException e) {
-            	SafeCloser.safeClose(this.inputStream);
-            	SafeCloser.safeClose(this.outputStream);
-                throw new SocketException("NanoHttpd Shutdown");
-            }
-            if (read == -1) {
-                // socket was been closed
-            	SafeCloser.safeClose(this.inputStream);
-            	SafeCloser.safeClose(this.outputStream);
-                throw new SocketException("NanoHttpd Shutdown");
-            }
-            while (read > 0) {
-                this.rlen += read;
-                this.splitbyte = findHeaderEnd(buf, this.rlen);
-                if (this.splitbyte > 0) {
-                    break;
-                }
-                read = this.inputStream.read(buf, this.rlen, HTTPSession.BUFSIZE - this.rlen);
-            }
-
-            if (this.splitbyte < this.rlen) {
-                this.inputStream.reset();
-                this.inputStream.skip(this.splitbyte);
-            }
-
-            this.parms = new HashMap<String, List<String>>();
-            if (null == this.headers) {
-                this.headers = new HashMap<String, String>();
-            } else {
-                this.headers.clear();
-            }
-
+        	
+        	byte[] buf = readInput();
+        	
             // Create a BufferedReader for parsing the header.
             BufferedReader hin = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(buf, 0, this.rlen)));
 
@@ -269,27 +230,15 @@ public class HTTPSession implements IHTTPSession {
             this.tempFileManager.clear();
         }
     }
-
-    /**
-     * Find byte index separating header from body. It must be the last byte of
-     * the first two sequential new lines.
-     */
-    private int findHeaderEnd(final byte[] buf, int rlen) {
-        int splitbyte = 0;
-        while (splitbyte + 1 < rlen) {
-
-            // RFC2616
-            if (buf[splitbyte] == '\r' && buf[splitbyte + 1] == '\n' && splitbyte + 3 < rlen && buf[splitbyte + 2] == '\r' && buf[splitbyte + 3] == '\n') {
-                return splitbyte + 4;
-            }
-
-            // tolerance
-            if (buf[splitbyte] == '\n' && buf[splitbyte + 1] == '\n') {
-                return splitbyte + 2;
-            }
-            splitbyte++;
-        }
-        return 0;
+    
+    private byte[] readInput() throws IOException {
+    	HTTPSessionInputReader h = new  HTTPSessionInputReader(inputStream,outputStream,BUFSIZE);
+    	byte[] buf = h.readInput();
+    	this.rlen = h.getRlen();
+    	this.splitbyte = h.getSplitbyte();
+    	this.parms = h.getParms();
+    	this.headers = h.getHeaders();
+		return buf;
     }
 
    
