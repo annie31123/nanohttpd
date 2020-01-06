@@ -13,7 +13,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MimeTypes implements IMimeTypes{
+public class MimeTypes {
 
 	/**
      * Hashtable mapping (String)FILENAME_EXTENSION -> (String)MIME_TYPE

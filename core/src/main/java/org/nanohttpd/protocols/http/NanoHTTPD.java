@@ -210,7 +210,7 @@ public abstract class NanoHTTPD {
     
     public static Map<String, String> mimeTypes() {
     	
-    	IMimeTypes mimeTypes = new MimeTypes();
+    	MimeTypes mimeTypes = new MimeTypes();
     	MIME_TYPES = mimeTypes.mappingMimeTypes(MIME_TYPES);
     	
     	return MIME_TYPES;
