@@ -151,6 +151,8 @@ public abstract class NanoHTTPD {
     
     protected static Map<String, String> MIME_TYPES;
     
+    private static final String QUERY_STRING_PARAMETER = "NanoHttpd.QUERY_STRING";
+    
 
     /**
      * Creates an SSLSocketFactory for HTTPS. Pass a loaded KeyStore and an
@@ -206,7 +208,7 @@ public abstract class NanoHTTPD {
         }
     }
     
-    public static Map<String, String> setMimeTypes() {
+    public static Map<String, String> mimeTypes() {
     	
     	IMimeTypes mimeTypes = new MimeTypes();
     	MIME_TYPES = mimeTypes.mappingMimeTypes(MIME_TYPES);
@@ -225,14 +227,27 @@ public abstract class NanoHTTPD {
         int dot = uri.lastIndexOf('.');
         String mime = null;
         if (dot >= 0) {
-            mime = setMimeTypes().get(uri.substring(dot + 1).toLowerCase());
+            mime = mimeTypes().get(uri.substring(dot + 1).toLowerCase());
         }
         return mime == null ? "application/octet-stream" : mime;
     }
 
+    /**
+     * Call NanoHTTPDDecoder
+     */
+    protected static Map<String, List<String>> decodeParameters(Map<String, String> parms){
+    	NanoHTTPDDecoder.setQueryString(NanoHTTPD.QUERY_STRING_PARAMETER);
+    	return NanoHTTPDDecoder.decodeParameters(parms);
+    }
     
+    protected static Map<String, List<String>> decodeParameters(String queryString){
+    	
+    	return NanoHTTPDDecoder.decodeParameters(queryString);
+    }
     
-    
+    public static String decodePercent(String str) {
+    	return NanoHTTPDDecoder.decodePercent(str);
+    }
     
 
     public final String hostname;

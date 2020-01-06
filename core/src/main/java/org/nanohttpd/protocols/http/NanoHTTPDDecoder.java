@@ -1,10 +1,7 @@
 package org.nanohttpd.protocols.http;
 
-
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLDecoder;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,12 +10,8 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
-
-
-public class Decoder{
-
-    /**
+public class NanoHTTPDDecoder {
+	/**
      *To store the actual query string in the parameters map for later re-processing.
      */
     private static String queryStringParameters = "Decoder.queryString";
@@ -26,12 +19,15 @@ public class Decoder{
     /**
      * logger to log to.
      */
-    public static final Logger LOG = Logger.getLogger(Decoder.class.getName());
+    public static final Logger LOG = Logger.getLogger(NanoHTTPDDecoder.class.getName());
 
 
-    Decoder(String queryString){
-        queryStringParameters = queryString;
+    
+    
+    public static void setQueryString(String queryString) {
+    	queryStringParameters = queryString;
     }
+    
     /**
      * Decode parameters from a URL, handing the case where a single parameter
      * name might have been supplied several times, by return lists of values.
@@ -92,10 +88,8 @@ public class Decoder{
         try {
             decoded = URLDecoder.decode(str, "UTF8");
         } catch (UnsupportedEncodingException ignored) {
-            Decoder.LOG.log(Level.WARNING, "Encoding not supported, ignored", ignored);
+        	NanoHTTPDDecoder.LOG.log(Level.WARNING, "Encoding not supported, ignored", ignored);
         }
         return decoded;
     }
-
 }
-    

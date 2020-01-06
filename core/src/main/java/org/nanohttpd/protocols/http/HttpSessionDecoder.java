@@ -94,9 +94,9 @@ public class HttpSessionDecoder {
             int qmi = uri.indexOf('?');
             if (qmi >= 0) {
                 decodeParms(uri.substring(qmi + 1), parms);
-                uri = Decoder.decodePercent(uri.substring(0, qmi));
+                uri = NanoHTTPD.decodePercent(uri.substring(0, qmi));
             } else {
-                uri = Decoder.decodePercent(uri);
+                uri = NanoHTTPD.decodePercent(uri);
             }
 
             // If there's another token, its protocol version,
@@ -257,10 +257,10 @@ public class HttpSessionDecoder {
             String value = null;
 
             if (sep >= 0) {
-                key = Decoder.decodePercent(e.substring(0, sep)).trim();
-                value = Decoder.decodePercent(e.substring(sep + 1));
+                key = NanoHTTPD.decodePercent(e.substring(0, sep)).trim();
+                value = NanoHTTPD.decodePercent(e.substring(sep + 1));
             } else {
-                key = Decoder.decodePercent(e).trim();
+                key = NanoHTTPD.decodePercent(e).trim();
                 value = "";
             }
 
