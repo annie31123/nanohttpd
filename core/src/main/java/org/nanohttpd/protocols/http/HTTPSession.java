@@ -129,8 +129,8 @@ public class HTTPSession implements IHTTPSession {
     
     private void decodeHeader(BufferedReader in, Map<String, String> pre, Map<String, List<String>> parms, Map<String, String> headers) throws ResponseException {
     	HTTPSessionDecoder h = new HTTPSessionDecoder(MAX_HEADER_SIZE,tempFileManager);
-		h.decodeHeader(in,pre,parms,headers);
-		protocolVersion = h.getProtocolVersion();    
+    	h.decodeHeader(in,pre,parms,headers);
+    	protocolVersion = h.getProtocolVersion();    
     }
     
     private void decodeMultipartFormData(ContentType contentType, ByteBuffer fbuf, Map<String, List<String>> parms, Map<String, String> files) throws ResponseException {
