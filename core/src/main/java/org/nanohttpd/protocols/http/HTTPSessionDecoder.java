@@ -26,7 +26,7 @@ import org.nanohttpd.protocols.http.response.Status;
 import org.nanohttpd.protocols.http.tempfiles.ITempFile;
 import org.nanohttpd.protocols.http.tempfiles.ITempFileManager;
 
-public class HttpSessionDecoder {
+public class HTTPSessionDecoder {
 	
 	public static final String CONTENT_DISPOSITION_REGEX = "([ |\t]*Content-Disposition[ |\t]*:)(.*)";
 
@@ -40,7 +40,7 @@ public class HttpSessionDecoder {
 
     public static final Pattern CONTENT_DISPOSITION_ATTRIBUTE_PATTERN = Pattern.compile(CONTENT_DISPOSITION_ATTRIBUTE_REGEX);
 
-    public static final Logger LOG = Logger.getLogger(HttpSessionDecoder.class.getName());
+    public static final Logger LOG = Logger.getLogger(HTTPSessionDecoder.class.getName());
 	
 	private String protocolVersion;
 	
@@ -51,7 +51,7 @@ public class HttpSessionDecoder {
 	
 	
 	
-	public HttpSessionDecoder(int m, ITempFileManager t) {
+	public HTTPSessionDecoder(int m, ITempFileManager t) {
 		maxHeaderSize = m;
 		tempFileManager = t;
 	}
@@ -107,7 +107,7 @@ public class HttpSessionDecoder {
                 protocolVersion = st.nextToken();
             } else {
                 protocolVersion = "HTTP/1.1";
-                HttpSessionDecoder.LOG.log(Level.FINE, "no protocol version specified, strange. Assuming HTTP/1.1.");
+                HTTPSessionDecoder.LOG.log(Level.FINE, "no protocol version specified, strange. Assuming HTTP/1.1.");
             }
             String line = in.readLine();
             while (line != null && !line.trim().isEmpty()) {
@@ -156,10 +156,10 @@ public class HttpSessionDecoder {
                 mpline = in.readLine();
                 headerLines++;
                 while (mpline != null && mpline.trim().length() > 0) {
-                    Matcher matcher = HttpSessionDecoder.CONTENT_DISPOSITION_PATTERN.matcher(mpline);
+                    Matcher matcher = HTTPSessionDecoder.CONTENT_DISPOSITION_PATTERN.matcher(mpline);
                     if (matcher.matches()) {
                         String attributeString = matcher.group(2);
-                        matcher = HttpSessionDecoder.CONTENT_DISPOSITION_ATTRIBUTE_PATTERN.matcher(attributeString);
+                        matcher = HTTPSessionDecoder.CONTENT_DISPOSITION_ATTRIBUTE_PATTERN.matcher(attributeString);
                         while (matcher.find()) {
                             String key = matcher.group(1);
                             if ("name".equalsIgnoreCase(key)) {
@@ -177,7 +177,7 @@ public class HttpSessionDecoder {
                             }
                         }
                     }
-                    matcher = HttpSessionDecoder.CONTENT_TYPE_PATTERN.matcher(mpline);
+                    matcher = HTTPSessionDecoder.CONTENT_TYPE_PATTERN.matcher(mpline);
                     if (matcher.matches()) {
                         partContentType = matcher.group(2).trim();
                     }
